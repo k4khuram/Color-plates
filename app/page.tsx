@@ -434,6 +434,57 @@ export default function ColorPalettePage() {
             This balanced palette uses the calming blue as primary, warm sunset tones as secondary/accent,
             cream for backgrounds, and deep brown for text — perfectly matching your hero section's aesthetic.
           </p>
+
+          {/* Recommended Gradients */}
+          <div className="mt-8 border-t border-[#5C4535]/10 pt-8">
+            <h3 className="mb-4 text-base font-semibold text-[#3D2A1F]">Recommended Gradients</h3>
+            <p className="mb-4 text-sm text-[#5C4535]">
+              Gradients using palette colors — ideal for heroes, section backgrounds, or buttons.
+            </p>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {[
+                { name: "Sky to Cream", gradient: "linear-gradient(180deg, #5B8BA8 0%, #FFF8F0 100%)" },
+                { name: "Sunset Fade", gradient: "linear-gradient(180deg, #D4956A 0%, #FFF8F0 100%)" },
+                { name: "Teal Fade", gradient: "linear-gradient(135deg, #7BA5B8 0%, #B8D4DE 100%)" },
+                { name: "Peach Dream", gradient: "linear-gradient(180deg, #DDA478 0%, #E8B08A 100%)" },
+                { name: "Calm to Warm", gradient: "linear-gradient(135deg, #B8D4DE 0%, #C98B5F 100%)" },
+              ].map((grad) => (
+                <div
+                  key={grad.name}
+                  className="overflow-hidden rounded-xl border border-[#5C4535]/10 transition-shadow hover:shadow-md"
+                >
+                  <div className="h-20 w-full" style={{ background: grad.gradient }} />
+                  <div className="flex items-center justify-between p-3">
+                    <p className="text-sm font-medium text-[#3D2A1F]">{grad.name}</p>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <button className="flex items-center gap-1 rounded-md px-2 py-1 text-xs text-[#5B8BA8] transition-colors hover:bg-[#5B8BA8]/10">
+                          {copiedGradient === grad.gradient ? (
+                            <>
+                              <Check className="h-3 w-3" /> Copied
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="h-3 w-3" /> Copy
+                              <ChevronDown className="h-3 w-3" />
+                            </>
+                          )}
+                        </button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => copyGradient(grad.gradient, "css")}>
+                          Copy as CSS
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => copyGradient(grad.gradient, "value")}>
+                          Copy gradient value
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>
