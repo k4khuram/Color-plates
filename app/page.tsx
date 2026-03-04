@@ -1,7 +1,14 @@
 "use client"
 
 import { useState } from "react"
-import { Check, Copy } from "lucide-react"
+import { Check, ChevronDown, Copy } from "lucide-react"
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 interface ColorSwatch {
   name: string
@@ -205,13 +212,24 @@ const gradientSuggestions = [
   },
 ]
 
+const gradientToCss = (gradient: string) =>
+  `background: ${gradient};`
+
 export default function ColorPalettePage() {
   const [copiedColor, setCopiedColor] = useState<string | null>(null)
+  const [copiedGradient, setCopiedGradient] = useState<string | null>(null)
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text)
     setCopiedColor(text)
     setTimeout(() => setCopiedColor(null), 2000)
+  }
+
+  const copyGradient = (gradient: string, format: "css" | "value") => {
+    const text = format === "css" ? gradientToCss(gradient) : gradient
+    navigator.clipboard.writeText(text)
+    setCopiedGradient(gradient)
+    setTimeout(() => setCopiedGradient(null), 2000)
   }
 
   const categories = [...new Set(colorPalette.map((c) => c.category))]
@@ -267,7 +285,7 @@ export default function ColorPalettePage() {
         {/* Two-Color Gradient Plates */}
         <div className="mb-12">
           <h2 className="mb-2 text-xl font-semibold text-[#3D2A1F]">Two-Color Gradient Plates</h2>
-          <p className="mb-6 text-sm text-[#5C4535]">Click any gradient to copy its CSS code</p>
+          <p className="mb-6 text-sm text-[#5C4535]">Copy gradient value or full CSS code</p>
           
           {["Sky Blues", "Sunset Warmth", "Sky to Sunset", "With Neutrals"].map((category) => (
             <div key={category} className="mb-8">
@@ -276,10 +294,9 @@ export default function ColorPalettePage() {
                 {twoColorGradients
                   .filter((g) => g.category === category)
                   .map((grad) => (
-                    <button
+                    <div
                       key={grad.name}
-                      onClick={() => copyToClipboard(grad.gradient)}
-                      className="group overflow-hidden rounded-xl bg-white shadow-md transition-all hover:scale-105 hover:shadow-lg"
+                      className="group overflow-hidden rounded-xl bg-white shadow-md transition-all hover:shadow-lg"
                     >
                       <div className="h-24 w-full" style={{ background: grad.gradient }} />
                       <div className="p-3">
@@ -298,24 +315,41 @@ export default function ColorPalettePage() {
                               title={grad.to}
                             />
                           </div>
-                          <div className="flex items-center gap-1 text-xs text-[#5B8BA8]">
-                            {copiedColor === grad.gradient ? (
-                              <>
-                                <Check className="h-3 w-3" /> Copied
-                              </>
-                            ) : (
-                              <>
-                                <Copy className="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-100" />
-                              </>
-                            )}
-                          </div>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <button
+                                onClick={(e) => e.stopPropagation()}
+                                className="flex items-center gap-1 rounded-md px-2 py-1 text-xs text-[#5B8BA8] transition-colors hover:bg-[#5B8BA8]/10"
+                              >
+                                {copiedGradient === grad.gradient ? (
+                                  <>
+                                    <Check className="h-3 w-3" /> Copied
+                                  </>
+                                ) : (
+                                  <>
+                                    <Copy className="h-3 w-3" />
+                                    Copy
+                                    <ChevronDown className="h-3 w-3" />
+                                  </>
+                                )}
+                              </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem onClick={() => copyGradient(grad.gradient, "css")}>
+                                Copy as CSS
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => copyGradient(grad.gradient, "value")}>
+                                Copy gradient value
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </div>
                         <div className="mt-2 flex justify-between font-mono text-[10px] text-[#5C4535]/70">
                           <span>{grad.from}</span>
                           <span>{grad.to}</span>
                         </div>
                       </div>
-                    </button>
+                    </div>
                   ))}
               </div>
             </div>
@@ -344,20 +378,30 @@ export default function ColorPalettePage() {
                       />
                     ))}
                   </div>
-                  <button
-                    onClick={() => copyToClipboard(grad.gradient)}
-                    className="flex items-center gap-2 rounded-lg bg-[#5B8BA8]/10 px-3 py-1.5 text-xs font-medium text-[#5B8BA8] transition-colors hover:bg-[#5B8BA8]/20"
-                  >
-                    {copiedColor === grad.gradient ? (
-                      <>
-                        <Check className="h-3 w-3" /> Copied!
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="h-3 w-3" /> Copy CSS
-                      </>
-                    )}
-                  </button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button className="flex items-center gap-2 rounded-lg bg-[#5B8BA8]/10 px-3 py-1.5 text-xs font-medium text-[#5B8BA8] transition-colors hover:bg-[#5B8BA8]/20">
+                        {copiedGradient === grad.gradient ? (
+                          <>
+                            <Check className="h-3 w-3" /> Copied!
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="h-3 w-3" /> Copy
+                            <ChevronDown className="h-3 w-3" />
+                          </>
+                        )}
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => copyGradient(grad.gradient, "css")}>
+                        Copy as CSS
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => copyGradient(grad.gradient, "value")}>
+                        Copy gradient value
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </div>
             ))}
