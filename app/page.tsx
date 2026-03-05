@@ -438,9 +438,6 @@ export default function ColorPalettePage() {
           {/* Recommended Gradients */}
           <div className="mt-8 border-t border-[#5C4535]/10 pt-8">
             <h3 className="mb-4 text-base font-semibold text-[#3D2A1F]">Recommended Gradients</h3>
-            <p className="mb-4 text-sm text-[#5C4535]">
-              Gradients using palette colors — ideal for heroes, section backgrounds, or buttons.
-            </p>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {[
                 { name: "Sky to Cream", gradient: "linear-gradient(180deg, #5B8BA8 0%, #FFF8F0 100%)" },
